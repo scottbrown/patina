@@ -2,7 +2,12 @@ version: '3'
 
 vars:
   BINARY_NAME: patina
-  BUILD_DIR: ./cmd/patina
+  REPO: github.com/scottbrown
+  PKG: "{{.REPO}}/{{.BINARY_NAME}}"
+  pwd:
+    sh: pwd
+  BUILD_DIR: "{{.pwd}}/.build"
+  TEST_DIR: "{{.pwd}}/.test"
 
 tasks:
   default:
@@ -13,7 +18,7 @@ tasks:
   build:
     desc: Build the binary
     cmds:
-      - go build -o {{.BINARY_NAME}} {{.BUILD_DIR}}
+      - go build -o {{.BUILD_DIR}}/{{.BINARY_NAME}} {{.PKG}}/cmd/{{.BINARY_NAME}}
     sources:
       - "**/*.go"
     generates:
@@ -27,14 +32,14 @@ tasks:
   test:coverage:
     desc: Run tests with coverage report
     cmds:
-      - go test -coverprofile=coverage.out ./...
-      - go tool cover -func=coverage.out
+      - go test -coverprofile={{.TEST_DIR}/coverage.out ./...
+      - go tool cover -func={{.TEST_DIR}/coverage.out
 
   test:coverage:html:
     desc: Generate HTML coverage report
     cmds:
-      - go test -coverprofile=coverage.out ./...
-      - go tool cover -html=coverage.out -o coverage.html
+      - go test -coverprofile={{.TEST_DIR}/coverage.out ./...
+      - go tool cover -html={{.TEST_DIR}/coverage.out -o {{.TEST_DIR}/coverage.html
 
   lint:
     desc: Run linter
@@ -49,13 +54,7 @@ tasks:
   clean:
     desc: Clean build artifacts
     cmds:
-      - rm -f {{.BINARY_NAME}}
-      - rm -f coverage.out coverage.html
-
-  install:
-    desc: Install the binary to GOPATH/bin
-    cmds:
-      - go install {{.BUILD_DIR}}
+      - rm -f {{.BUILD_DIR}} {{.TEST_DIR}}
 
   tidy:
     desc: Tidy go modules
