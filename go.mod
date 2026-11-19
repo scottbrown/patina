@@ -1,6 +1,6 @@
 module github.com/scottbrown/patina
 
-go 1.25.5
+go 1.27.4
 
 require (
 	github.com/cli/go-gh/v2 v2.13.0
